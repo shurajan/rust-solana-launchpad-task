@@ -1,10 +1,19 @@
 # Минимум команд для запуска проекта
 
-.PHONY: install validator validator-metaplex build deploy deploy-devnet deploy-oracle-devnet deploy-minter-devnet init init-devnet deploy-oracle deploy-minter backend backend-devnet frontend kill-frontend test
+.PHONY: install check-node prereqs validator validator-metaplex build build-test deploy deploy-devnet deploy-oracle-devnet deploy-minter-devnet init init-devnet deploy-oracle deploy-minter backend backend-devnet frontend kill-frontend test
 
 install:
 	cd program && yarn install
 	cd frontend && npm install
+
+# Проверка версии Node: тесты требуют Node 20 (см. program/.nvmrc).
+# nvm — это shell-функция и недоступна внутри make, поэтому здесь только проверка.
+check-node:
+	@node -e 'var v=+process.versions.node.split(".")[0]; if (v!==20){console.error("\n[!] Требуется Node 20 (сейчас "+process.version+").\n    Выполните: nvm install 20 && nvm use 20   (см. program/.nvmrc)\n"); process.exit(1);} else {console.log("Node "+process.version+" — ок");}'
+
+# Установить всё необходимое для тестов: версия Node + зависимости program/
+prereqs: check-node
+	cd program && yarn install
 
 # Обычный локальный валидатор (без Metaplex)
 validator:
@@ -16,6 +25,12 @@ validator-metaplex:
 
 build:
 	cd program && anchor build
+
+# Сборка для тестов: target/ в .gitignore, после клона anchor генерирует
+# новые keypair'ы, ID которых не совпадают с зашитыми в исходниках/тестах.
+# Тесты грузят .so по фиксированным ID, поэтому пропускаем проверку ключей.
+build-test:
+	cd program && anchor build --ignore-keys
 
 # Деплоит оба контракта на localnet (сначала запусти make validator в другом терминале)
 deploy: build
@@ -61,5 +76,7 @@ kill-frontend:
 frontend: kill-frontend
 	cd frontend && npm run dev
 
-test:
-	cd program && yarn run ts-mocha -p ./tsconfig.json -t 1000000 "tests/**/*.ts"
+# Тесты (LiteSVM, без сети). Требуют Node 20 и собранные .so (build-test).
+# ts-mocha тянет несовместимый ts-node@7, поэтому запускаем mocha через loader ts-node/esm.
+test: check-node build-test
+	cd program && NODE_OPTIONS="--loader ts-node/esm" TS_NODE_PROJECT="./tsconfig.json" node_modules/.bin/mocha -t 1000000 "tests/**/*.ts"
