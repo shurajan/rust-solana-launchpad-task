@@ -5,12 +5,12 @@
 Что здесь специально изменено:
 - В `src/main.rs` оставлен `TODO` в функции `to_fixed_6`.
 - Один из unit-тестов намеренно сломан и помечен как `TODO(student)`.
-- `Cargo.toml` уже смотрит на `../program-task`, чтобы учебные части были связаны друг с другом.
+- `Cargo.toml` смотрит на `../program/programs/sol_usd_oracle`, чтобы учебные части были связаны друг с другом.
 
 Как запускать:
 
 ```bash
-cd backend-task
+cd backend
 cargo test
 ```
 

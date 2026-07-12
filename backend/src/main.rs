@@ -300,14 +300,41 @@ fn parse_token_created(logs: &RpcLogsResponse, _program_id: Pubkey) -> Option<To
 }
 
 fn to_fixed_6(txt: &str) -> Result<u64> {
-    // TODO(student): parse a decimal string into an integer with 6 fixed decimals.
-    // Examples:
-    // - "120" -> 120_000_000
-    // - "120.12" -> 120_120_000
-    // - "0.000001" -> 1
-    // Extra digits after the 6th decimal place should be truncated, not rounded.
-    let _ = txt;
-    todo!("student task: implement fixed-6 parser")
+    const SCALE: u64 = 1_000_000;
+
+    let txt = txt.trim();
+    let (int_part, frac_part) = match txt.split_once('.') {
+        Some((i, f)) => (i, f),
+        None => (txt, ""),
+    };
+
+    if int_part.is_empty() && frac_part.is_empty() {
+        return Err(anyhow!("invalid decimal: {txt:?}"));
+    }
+
+    // Integer part: allow an empty part (e.g. ".5"), otherwise it must be all digits.
+    let int_val: u64 = if int_part.is_empty() {
+        0
+    } else {
+        int_part
+            .parse()
+            .map_err(|_| anyhow!("invalid integer part in {txt:?}"))?
+    };
+
+    // Fractional part: must be digits; keep at most 6, truncating extras (no rounding).
+    if !frac_part.chars().all(|c| c.is_ascii_digit()) {
+        return Err(anyhow!("invalid fractional part in {txt:?}"));
+    }
+    let mut frac = String::from(&frac_part[..frac_part.len().min(6)]);
+    while frac.len() < 6 {
+        frac.push('0');
+    }
+    let frac_val: u64 = frac.parse().unwrap_or(0);
+
+    int_val
+        .checked_mul(SCALE)
+        .and_then(|v| v.checked_add(frac_val))
+        .ok_or_else(|| anyhow!("value out of range: {txt:?}"))
 }
 
 #[cfg(test)]
@@ -338,9 +365,8 @@ mod tests {
 
     #[test]
     fn to_fixed_6_truncates_fraction_to_six_digits() {
-        // TODO(student): this assertion is intentionally wrong.
-        // The parser is expected to truncate after 6 digits instead of rounding.
-        assert_eq!(to_fixed_6("1.1234569").unwrap(), 1_123_457);
+        // Truncation after 6 digits, not rounding: 1.1234569 -> 1.123456.
+        assert_eq!(to_fixed_6("1.1234569").unwrap(), 1_123_456);
     }
 
     #[test]
