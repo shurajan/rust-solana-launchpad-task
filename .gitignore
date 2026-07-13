@@ -33,6 +33,7 @@ test_*.txt
 test_*.bin
 test_*.png
 *.old
+deploy.log
 
 perf.data
 perf.data.old

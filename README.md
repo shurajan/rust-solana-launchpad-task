@@ -66,7 +66,7 @@
    Требования:
    - **Node.js ≥ 23.6** (рекомендуется Node 24 LTS или новее). Тесты — TypeScript ESM, современный Node исполняет их нативно (type stripping), без ts-node. Версия проверяется автоматически при `yarn install` (поле `engines` в `program/package.json`).
    - Зависимости: `make install` (или `cd program && yarn install`).
-   - Собранные программы: тесты грузят `.so` из `program/target/deploy/` по ID, зашитым в исходниках (`4cuv…`, `E5er…`). Если `anchor build` падает с «Program ID mismatch» (keypair'ы в `target/deploy/` сгенерированы заново после клона), соберите с пропуском проверки ключей — синхронизировать ключи для тестов **не нужно**:
+   - Собранные программы: тесты грузят `.so` из `program/target/deploy/` по ID, зашитым в исходниках (`qgMx…`, `HZ8…`). Если `anchor build` падает с «Program ID mismatch» (keypair'ы в `target/deploy/` сгенерированы заново после клона), соберите с пропуском проверки ключей — синхронизировать ключи для тестов **не нужно**:
      ```bash
      cd program && anchor build --ignore-keys
      ```
@@ -76,6 +76,37 @@
    make test          # или: cd program && anchor test
    ```
    Или `anchor run litesvm` — то же самое, только тесты `tests/*.litesvm.ts`.
+
+## Devnet: доказательства деплоя
+
+Программы задеплоены и инициализированы на devnet (полный лог — в `deploy.log`).
+
+### Программы
+
+| Программа | Program ID | Deploy tx | Слот |
+|---|---|---|---|
+| `sol_usd_oracle` | [`qgMxYoiKq6imJNLcnJCGsEZFNqCk7jkpEPPrVigwE55`](https://explorer.solana.com/address/qgMxYoiKq6imJNLcnJCGsEZFNqCk7jkpEPPrVigwE55?cluster=devnet) | [`3mmqhy…95Ciu`](https://explorer.solana.com/tx/3mmqhyMSuVCMU9QtfEVuJJJ2xmMq9FjscK5KVxqV4Hcwa7krr92pNivBuDoADfD18RgamJ9VqDDtCW38ian95Ciu?cluster=devnet) | 475979776 |
+| `token_minter` | [`HZ8ztnxaaLYgGb33c4t4mp5pxHELn4kN8xbxfG67sdCG`](https://explorer.solana.com/address/HZ8ztnxaaLYgGb33c4t4mp5pxHELn4kN8xbxfG67sdCG?cluster=devnet) | [`4jPZae…1W4Dc`](https://explorer.solana.com/tx/4jPZaeqoy3zsf4uBSpKruGib9EXSWSrUyxPQXDmbHgYSVRnxZbdf62Gbbfww3Zd6eEFXbugYovTGnUCGKoX1W4Dc?cluster=devnet) | 475984704 |
+
+Upgrade authority обеих программ: [`4zFz4k8BjQ2GXZ9unqAefT3f8ELEMb85yAFzoHtGkHpi`](https://explorer.solana.com/address/4zFz4k8BjQ2GXZ9unqAefT3f8ELEMb85yAFzoHtGkHpi?cluster=devnet).
+
+### Инициализация (`make init-devnet`)
+
+| Шаг | Транзакция |
+|---|---|
+| `initialize_oracle` | [`szFUkt…zGnpC`](https://explorer.solana.com/tx/szFUktfEWpYmFqVagDpvWzEY3exaMY8tf2mJ81KJMpPX6f5MK7r2fa7CpvxWCg7HDyhkPwYkVWrBYRfUkkzGnpC?cluster=devnet) |
+| `update_price` (цена $120) | [`44ymQ4…J2ELL`](https://explorer.solana.com/tx/44ymQ4Z4JKLEaYSPStDmaeSRZrDaQX9jc28MgQy7f82UB2wks167fw6bzqG8DXg4h3jNS98yWerw6BEoTk4J2ELL?cluster=devnet) |
+| `initialize_minter` | [`5DnWZJ…JEfMr`](https://explorer.solana.com/tx/5DnWZJTc3NMnK28su1fJmdRVMuLB5xWFSXgfkVofxfVACusZJdgEhxVF7CVHphNbY8g9kyvFNhXkyBwfGNvJEfMr?cluster=devnet) |
+
+Oracle state PDA: [`GpkvPnhPKdW7CmccSjgumyySro2Yt3e5tBe3PEcpbDPc`](https://explorer.solana.com/address/GpkvPnhPKdW7CmccSjgumyySro2Yt3e5tBe3PEcpbDPc?cluster=devnet).
+
+### Минты через UI
+
+| # | Транзакция |
+|---|---|
+| 1 | [`3732Kb…euUt2`](https://explorer.solana.com/tx/3732KbbnY1xXguJsGtVMa8hGnarxaqJ4WA8oWaxzAc3iVjb3vjrUrioiTRirTiTB6Zhco9iB5N1B1eYSnGqeuUt2?cluster=devnet) |
+| 2 | [`5eqD2F…KrriB`](https://explorer.solana.com/tx/5eqD2FW6eEqfresW4a9VTj3DrzdG1AJaUyCnymAuAzrrVbgrkSwSDUuqvhDE8pbQAFGD3QLMzRqgLnPXA2BKrriB?cluster=devnet) |
+| 3 | [`4FnuFS…cJFDFG`](https://explorer.solana.com/tx/4FnuFS97u5tN8zxMnbaQ1ounF3xXHbAtVfpcjkDcRD9GeVAFT5AAG3r6LmxvmKFQBdgiabNZwDU18QZ4kfcJFDFG?cluster=devnet) |
 
 ## Переменные окружения для backend
 

@@ -1,0 +1,145 @@
+Доказательства DEPLOY
+
+sasha@MacBook-Pro-Alexander-2 rust-solana-launchpad-task % ./deploy-devnet-helius.sh XXXXXXXXXXXXXXXXX
+=== Текущий solana config (не меняется скриптом) ===
+RPC URL: https://api.devnet.solana.com
+
+=== Баланс кошелька на devnet ===
+5.989178538 SOL
+
+=== Закрываем зависшие deploy-буферы (возврат ренты) ===
+
+Buffer Address                               | Authority                                    | Balance
+
+
+=== anchor build ===
+WARNING: `anchor-lang` version(0.32.1) and the current CLI version(1.0.1) don't match.
+
+        This can lead to unwanted behavior. To use the same CLI version, add:
+
+        [toolchain]
+        anchor_version = "0.32.1"
+
+        to Anchor.toml
+
+   Compiling sol-usd-oracle v0.1.0 (/Users/sasha/RustroverProjects/rust-solana-launchpad-task/program/programs/sol_usd_oracle)
+    Finished `release` profile [optimized] target(s) in 0.83s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.22s
+     Running unittests src/lib.rs (/Users/sasha/RustroverProjects/rust-solana-launchpad-task/program/target/debug/deps/sol_usd_oracle-d1f4e3961179facc)
+   Compiling sol-usd-oracle v0.1.0 (/Users/sasha/RustroverProjects/rust-solana-launchpad-task/program/programs/sol_usd_oracle)
+   Compiling token-minter v0.1.0 (/Users/sasha/RustroverProjects/rust-solana-launchpad-task/program/programs/token_minter)
+    Finished `release` profile [optimized] target(s) in 1.20s
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running unittests src/lib.rs (/Users/sasha/RustroverProjects/rust-solana-launchpad-task/program/target/debug/deps/token_minter-980b826529cc1e77)
+
+=== Деплой sol_usd_oracle (qgMxYoiKq6imJNLcnJCGsEZFNqCk7jkpEPPrVigwE55) ===
+Blockhash expired. 99 retries remaining
+Blockhash expired. 98 retries remaining
+Blockhash expired. 97 retries remaining
+Blockhash expired. 96 retries remaining
+Blockhash expired. 95 retries remaining
+Blockhash expired. 94 retries remaining
+Blockhash expired. 93 retries remaining
+Blockhash expired. 92 retries remaining
+Blockhash expired. 91 retries remaining
+Blockhash expired. 90 retries remaining
+Blockhash expired. 89 retries remaining
+Blockhash expired. 88 retries remaining
+Blockhash expired. 87 retries remaining
+Blockhash expired. 86 retries remaining
+Blockhash expired. 85 retries remaining
+Blockhash expired. 84 retries remaining
+Blockhash expired. 83 retries remaining
+Blockhash expired. 82 retries remaining
+Blockhash expired. 81 retries remaining
+Blockhash expired. 80 retries remaining
+Blockhash expired. 79 retries remaining
+Program Id: qgMxYoiKq6imJNLcnJCGsEZFNqCk7jkpEPPrVigwE55
+
+Signature: 3mmqhyMSuVCMU9QtfEVuJJJ2xmMq9FjscK5KVxqV4Hcwa7krr92pNivBuDoADfD18RgamJ9VqDDtCW38ian95Ciu
+
+
+=== Деплой token_minter (HZ8ztnxaaLYgGb33c4t4mp5pxHELn4kN8xbxfG67sdCG) ===
+Blockhash expired. 99 retries remaining
+Blockhash expired. 98 retries remaining
+Blockhash expired. 97 retries remaining
+Blockhash expired. 96 retries remaining
+Blockhash expired. 95 retries remaining
+Blockhash expired. 94 retries remaining
+Blockhash expired. 93 retries remaining
+Blockhash expired. 92 retries remaining
+Blockhash expired. 91 retries remaining
+Blockhash expired. 90 retries remaining
+Blockhash expired. 89 retries remaining
+Blockhash expired. 88 retries remaining
+Blockhash expired. 87 retries remaining
+Blockhash expired. 86 retries remaining
+Blockhash expired. 85 retries remaining
+Blockhash expired. 84 retries remaining
+Blockhash expired. 83 retries remaining
+Blockhash expired. 82 retries remaining
+Blockhash expired. 81 retries remaining
+Blockhash expired. 80 retries remaining
+Blockhash expired. 79 retries remaining
+Blockhash expired. 78 retries remaining
+Blockhash expired. 77 retries remaining
+Blockhash expired. 76 retries remaining
+Blockhash expired. 75 retries remaining
+Blockhash expired. 74 retries remaining
+Blockhash expired. 73 retries remaining
+Blockhash expired. 72 retries remaining
+Blockhash expired. 71 retries remaining
+Blockhash expired. 70 retries remaining
+Blockhash expired. 69 retries remaining
+Blockhash expired. 68 retries remaining
+Program Id: HZ8ztnxaaLYgGb33c4t4mp5pxHELn4kN8xbxfG67sdCG
+
+Signature: 4jPZaeqoy3zsf4uBSpKruGib9EXSWSrUyxPQXDmbHgYSVRnxZbdf62Gbbfww3Zd6eEFXbugYovTGnUCGKoX1W4Dc
+
+
+=== Проверка ===
+
+Program Id: qgMxYoiKq6imJNLcnJCGsEZFNqCk7jkpEPPrVigwE55
+Owner: BPFLoaderUpgradeab1e11111111111111111111111
+ProgramData Address: FAJxWyDmMzo9E1ovQVctEwWbre3fJE6mjQNJQQpCBTD9
+Authority: 4zFz4k8BjQ2GXZ9unqAefT3f8ELEMb85yAFzoHtGkHpi
+Last Deployed In Slot: 475979776
+Data Length: 202816 (0x31840) bytes
+Balance: 1.41280344 SOL
+
+
+Program Id: HZ8ztnxaaLYgGb33c4t4mp5pxHELn4kN8xbxfG67sdCG
+Owner: BPFLoaderUpgradeab1e11111111111111111111111
+ProgramData Address: 2NXfxyJo96MUnZ6ys6Bacqj18ATAd7q9oDRsXquaiNSy
+Authority: 4zFz4k8BjQ2GXZ9unqAefT3f8ELEMb85yAFzoHtGkHpi
+Last Deployed In Slot: 475984704
+Data Length: 314144 (0x4cb20) bytes
+Balance: 2.18764632 SOL
+
+
+=== Готово. Дальше: make init-devnet ===
+sasha@MacBook-Pro-Alexander-2 rust-solana-launchpad-task % make init-devnet
+cd program && RPC_URL=https://api.devnet.solana.com node scripts/init-local.js
+ORACLE_STATE_PUBKEY=GpkvPnhPKdW7CmccSjgumyySro2Yt3e5tBe3PEcpbDPc
+Initializing oracle...
+  tx: szFUktfEWpYmFqVagDpvWzEY3exaMY8tf2mJ81KJMpPX6f5MK7r2fa7CpvxWCg7HDyhkPwYkVWrBYRfUkkzGnpC
+  Oracle account visible after 1 attempt(s)
+Setting initial price...
+  tx: 44ymQ4Z4JKLEaYSPStDmaeSRZrDaQX9jc28MgQy7f82UB2wks167fw6bzqG8DXg4h3jNS98yWerw6BEoTk4J2ELL
+Initializing minter (treasury = wallet)...
+  tx: 5DnWZJTc3NMnK28su1fJmdRVMuLB5xWFSXgfkVofxfVACusZJdgEhxVF7CVHphNbY8g9kyvFNhXkyBwfGNvJEfMr
+Done. Add to backend/.env:
+ORACLE_STATE_PUBKEY=GpkvPnhPKdW7CmccSjgumyySro2Yt3e5tBe3PEcpbDPc
+sasha@MacBook-Pro-Alexander-2 rust-solana-launchpad-task %
+
+
+ДОКАЗАТЕЛЬСТВА  MINT
+
+MINT #1
+https://explorer.solana.com/tx/3732KbbnY1xXguJsGtVMa8hGnarxaqJ4WA8oWaxzAc3iVjb3vjrUrioiTRirTiTB6Zhco9iB5N1B1eYSnGqeuUt2?cluster=devnet
+
+MINT #2
+https://explorer.solana.com/tx/5eqD2FW6eEqfresW4a9VTj3DrzdG1AJaUyCnymAuAzrrVbgrkSwSDUuqvhDE8pbQAFGD3QLMzRqgLnPXA2BKrriB?cluster=devnet
+
+MINT #3
+https://explorer.solana.com/tx/4FnuFS97u5tN8zxMnbaQ1ounF3xXHbAtVfpcjkDcRD9GeVAFT5AAG3r6LmxvmKFQBdgiabNZwDU18QZ4kfcJFDFG?cluster=devnet
