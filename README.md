@@ -63,38 +63,19 @@
 
 6. **Тесты** (LiteSVM, без сети):
 
-   Быстрый путь — всё через `make` (проверит версию Node, соберёт с `--ignore-keys`, запустит тесты):
+   Требования:
+   - **Node.js ≥ 23.6** (рекомендуется Node 24 LTS или новее). Тесты — TypeScript ESM, современный Node исполняет их нативно (type stripping), без ts-node. Версия проверяется автоматически при `yarn install` (поле `engines` в `program/package.json`).
+   - Зависимости: `make install` (или `cd program && yarn install`).
+   - Собранные программы: тесты грузят `.so` из `program/target/deploy/` по ID, зашитым в исходниках (`4cuv…`, `E5er…`). Если `anchor build` падает с «Program ID mismatch» (keypair'ы в `target/deploy/` сгенерированы заново после клона), соберите с пропуском проверки ключей — синхронизировать ключи для тестов **не нужно**:
+     ```bash
+     cd program && anchor build --ignore-keys
+     ```
+
+   Запуск:
    ```bash
-   nvm use 20        # см. program/.nvmrc; make не может переключить Node сам
-   make test         # = check-node + build-test + запуск mocha
-   ```
-   `make prereqs` отдельно проверит Node и поставит зависимости `program/`.
-
-   Что делают эти шаги вручную и почему — ниже.
-
-   Предварительные требования (иначе тесты не запустятся):
-   - **Node.js 20 LTS.** На Node 18 и Node 24+ старый стек mocha/ts-node падает при загрузке ESM-тестов (`"type": "module"` + `import.meta.url`). Зафиксируйте версию:
-     ```bash
-     nvm install 20 && nvm use 20   # см. .nvmrc
-     ```
-   - **Зависимости.** `package.json` уже включает `ts-node@10.9.2` (у него есть ESM-loader; штатный `ts-mocha` тянет несовместимый `ts-node@7`). Достаточно установить:
-     ```bash
-     cd program && yarn install
-     ```
-   - **Сборка программ с `--ignore-keys`.** Каталог `target/` в `.gitignore`, поэтому после клона `anchor build` генерирует новые keypair'ы и их ID не совпадают с зашитыми в исходниках/тестах (`4cuv…`, `E5er…`). Тесты грузят `.so` по этим фиксированным ID, поэтому ключи синхронизировать **не нужно** — просто пропускаем проверку:
-     ```bash
-     anchor build --ignore-keys
-     ```
-
-   Запуск тестов (после `anchor build --ignore-keys`):
-   ```bash
-   cd program
-   anchor test            # или: anchor run test
+   make test          # или: cd program && anchor test
    ```
    Или `anchor run litesvm` — то же самое, только тесты `tests/*.litesvm.ts`.
-
-   > Скрипты `test`/`litesvm` в `Anchor.toml` запускают `mocha` через loader `ts-node/esm`
-   > напрямую, а не `ts-mocha`, так как последний несовместим с ESM.
 
 ## Переменные окружения для backend
 
