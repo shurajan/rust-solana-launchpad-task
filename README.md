@@ -8,13 +8,13 @@
   - `programs/token_minter` — минтит SPL токены за комиссию в SOL, используя цену из oracle  
   - `tests/` — Anchor TS тесты  
 - `backend/` — Rust сервис, который обновляет цену и слушает события `TokenCreated`
-- `frontend/` — Remix hello-world (React Router)
+- `frontend/` — Remix UI для минта: подключение кошелька (Phantom/Solflare), переключатель Localnet/Devnet, форма минта
 
 ## Быстрый старт (локально)
 
-1. **Validator**: запустить `solana-test-validator` (или `make validator`). Для отображения имени, тикера и картинки токена в кошельке используйте валидатор с клоном Metaplex: `make validator-metaplex` (клон программы Token Metadata с mainnet). Убедитесь, что `~/.config/solana/id.json` есть и профинансирован (`solana airdrop 1000` при необходимости).
+1. **Validator**: запустить `solana-test-validator` (или `make validator`). Для отображения имени, тикера и картинки токена в кошельке используйте валидатор с клоном Metaplex: `make validator-metaplex` (клон программы Token Metadata с mainnet). Убедитесь, что `~/.config/solana/id.json` есть и профинансирован (`solana airdrop 1000 --url localhost` при необходимости — явный `--url`, чтобы не попасть на devnet, если CLI переключён туда).
 
-2. **Программы**: собрать и задеплоить (ID программ берутся из keypair в `program/target/deploy/`; при первом деплое выполните `anchor keys sync`, затем пересоберите):
+2. **Программы**: собрать и задеплоить. ID программ берутся из keypair в `program/target/deploy/` (в git не хранятся). Если после свежего клона сгенерировались новые keypair'ы, выполните `anchor keys sync` и пересоберите — но учтите: sync перепишет `declare_id!` и `Anchor.toml`, после чего нужно обновить те же ID, зашитые в `program/tests/*.ts`, `program/scripts/*.js`, `frontend/app/config.ts` и `backend/.env` (сейчас везде `qgMx…`/`HZ8…`):
    ```bash
    make build
    make deploy
@@ -24,6 +24,36 @@
    ```bash
    make init
    ```
+
+4. **Backend**: скопировать `backend/.env.example` в `backend/.env`, подставить `ORACLE_STATE_PUBKEY` из вывода init-скрипта. Путь `BACKEND_KEYPAIR_PATH` поддерживает `~`:
+   ```bash
+   cd backend
+   cargo run
+   ```
+   Сервис будет периодически вызывать `update_price` и слушать события `TokenCreated`, выводя их в stdout в JSON.
+
+5. **Фронтенд**:
+   ```bash
+   cd frontend
+   npm install && npm run dev
+   ```
+   Открыть http://localhost:7001 (порт задан в `frontend/package.json`; прод-вариант `npm run build && npm run start` — тоже 7001).
+
+6. **Тесты** (LiteSVM, без сети):
+
+   Требования:
+   - **Node.js ≥ 23.6** (рекомендуется Node 24 LTS или новее). Тесты — TypeScript ESM, современный Node исполняет их нативно (type stripping), без ts-node. Версия проверяется автоматически при `yarn install` (поле `engines` в `program/package.json`).
+   - Зависимости: `make install` (или `cd program && yarn install`).
+   - Собранные программы: тесты грузят `.so` из `program/target/deploy/` по ID, зашитым в исходниках (`qgMx…`, `HZ8…`). Если `anchor build` падает с «Program ID mismatch» (keypair'ы в `target/deploy/` сгенерированы заново после клона), соберите с пропуском проверки ключей — синхронизировать ключи для тестов **не нужно**:
+     ```bash
+     cd program && anchor build --ignore-keys
+     ```
+
+   Запуск:
+   ```bash
+   make test          # или: cd program && anchor run test
+   ```
+   Или `anchor run litesvm` — то же самое, только тесты `tests/*.litesvm.ts`.
 
 ## Деплой на Devnet
 
@@ -45,37 +75,11 @@
    make init-devnet
    ```
 
-4. В приложении выбрать сеть **Devnet**, в кошельке переключиться на Devnet — можно минтить. На devnet Metaplex уже есть, картинка в кошельке может отображаться (если URI доступен по HTTPS).
+4. **Backend для devnet** (опционально): `make backend-devnet` — подставит devnet RPC автоматически, остальное возьмёт из `backend/.env`.
 
-4. **Backend**: скопировать `backend/.env.example` в `backend/.env`, подставить `ORACLE_STATE_PUBKEY` из вывода init-скрипта. Путь `BACKEND_KEYPAIR_PATH` поддерживает `~`:
-   ```bash
-   cd backend
-   cargo run
-   ```
-   Сервис будет периодически вызывать `update_price` и слушать события `TokenCreated`, выводя их в stdout в JSON.
+5. В приложении выбрать сеть **Devnet**, в кошельке переключиться на Devnet — можно минтить. На devnet Metaplex уже есть, картинка в кошельке может отображаться (если URI доступен по HTTPS).
 
-5. **Фронтенд** (опционально):
-   ```bash
-   cd frontend
-   npm install && npm run dev
-   ```
-  Открыть http://localhost:7001.
-
-6. **Тесты** (LiteSVM, без сети):
-
-   Требования:
-   - **Node.js ≥ 23.6** (рекомендуется Node 24 LTS или новее). Тесты — TypeScript ESM, современный Node исполняет их нативно (type stripping), без ts-node. Версия проверяется автоматически при `yarn install` (поле `engines` в `program/package.json`).
-   - Зависимости: `make install` (или `cd program && yarn install`).
-   - Собранные программы: тесты грузят `.so` из `program/target/deploy/` по ID, зашитым в исходниках (`qgMx…`, `HZ8…`). Если `anchor build` падает с «Program ID mismatch» (keypair'ы в `target/deploy/` сгенерированы заново после клона), соберите с пропуском проверки ключей — синхронизировать ключи для тестов **не нужно**:
-     ```bash
-     cd program && anchor build --ignore-keys
-     ```
-
-   Запуск:
-   ```bash
-   make test          # или: cd program && anchor test
-   ```
-   Или `anchor run litesvm` — то же самое, только тесты `tests/*.litesvm.ts`.
+Если публичный RPC devnet обрывает деплой («Blockhash expired»), используйте `./deploy-devnet-helius.sh <HELIUS_API_KEY>` — деплой через Helius RPC с приоритетной комиссией и ретраями; `solana config` при этом не меняется.
 
 ## Devnet: доказательства деплоя
 
@@ -136,4 +140,4 @@ Oracle state PDA: [`GpkvPnhPKdW7CmccSjgumyySro2Yt3e5tBe3PEcpbDPc`](https://explo
 2. `cd program && anchor build && anchor deploy --provider.cluster localnet`
 3. `cd program && node scripts/init-local.js` — скопировать `ORACLE_STATE_PUBKEY` в `backend/.env`
 4. `cd backend && cargo run`
-5. `cd frontend && npm run dev` — открыть в браузере и покликать.
+5. `cd frontend && npm run dev` — открыть http://localhost:7001 и покликать.
