@@ -36,3 +36,5 @@ test_*.png
 
 perf.data
 perf.data.old
+
+test-ledger/

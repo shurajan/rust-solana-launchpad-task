@@ -7,8 +7,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 const { PublicKey } = anchor.web3;
 
-const ORACLE_PROGRAM_ID = new PublicKey("4cuvLFFqhaKnTHfeq2FtTUvgudRSe7wq982fA9PBUqBU");
-const MINTER_PROGRAM_ID = new PublicKey("E5erGzaxgCwHqH7RjLXLGWziXj8CXpyN7zW6BRodfFnE");
+const ORACLE_PROGRAM_ID = new PublicKey("qgMxYoiKq6imJNLcnJCGsEZFNqCk7jkpEPPrVigwE55");
+const MINTER_PROGRAM_ID = new PublicKey("HZ8ztnxaaLYgGb33c4t4mp5pxHELn4kN8xbxfG67sdCG");
 const ORACLE_SEED = Buffer.from("oracle_state");
 const MINTER_SEED = Buffer.from("minter_config");
 const INITIAL_PRICE = new anchor.BN(120_000_000); // $120 * 1e6
